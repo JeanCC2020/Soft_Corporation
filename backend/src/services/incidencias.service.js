@@ -20,6 +20,7 @@ const mapIncidencia = (inc) => ({
     : [],
 });
 
+/*
 const listarIncidencias = async () => {
   const { data, error } = await incidenciasRepository.findAll();
 
@@ -27,6 +28,25 @@ const listarIncidencias = async () => {
     throw error;
   }
 
+  return data.map(mapIncidencia);
+};
+*/
+const listarIncidencias = async (usuario) => {
+  // 1. Jalamos la data completa desde el repositorio base
+  const { data, error } = await incidenciasRepository.findAll();
+
+  if (error) {
+    throw error;
+  }
+
+  // 2. Si el usuario es un TÉCNICO, filtramos los datos EN EL BACKEND antes de responder
+  if (usuario && usuario.rol === 'tecnico') {
+    // Filtramos para que solo pasen las incidencias asignadas a su nombre (ej. "Carlos Tecnico")
+    const datosFiltrados = data.filter(inc => inc.tecnico_asignado === usuario.nombre);
+    return datosFiltrados.map(mapIncidencia);
+  }
+
+  // 3. Si es Jefe (o no viene usuario), se devuelve el listado completo empresarial
   return data.map(mapIncidencia);
 };
 
