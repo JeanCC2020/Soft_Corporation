@@ -14,22 +14,23 @@ router.patch('/:id', validateActualizarIncidencia, incidenciasController.actuali
 module.exports = router;
 */
 
+// Definimos rutas para gestion de incidencias 
 const express = require('express');
 const incidenciasController = require('../controllers/incidencias.controller');
 const { validateRegistrarIncidencia, validateActualizarIncidencia } = require('../middleware/validation.middleware');
 
-// 1. IMPORTAMOS LOS CANDADOS DE SEGURIDAD (MIDDLEWARES)
+// 1. IMPORTAMOS LOS CANDADOS DE SEGURIDAD (MIDDLEWARES): verificación de token y control de roles
 const { verifyToken, requireRole } = require('../middleware/auth.middleware');
 
 const router = express.Router();
 
-// 1. MIDDLEWARE PARA ELIMINAR LA CACHÉ DEL NAVEGADOR (Bfcache)
+// 2. MIDDLEWARE PARA ELIMINAR LA CACHÉ DEL NAVEGADOR (Bfcache)
 router.use((req, res, next) => {
   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
   next();
 });
 
-// 2. INYECTAMOS LOS CANDADOS EN CADA RUTA ANTES DEL CONTROLADOR
+// 3. INYECTAMOS LOS CANDADOS EN CADA RUTA ANTES DEL CONTROLADOR
 
 // LISTAR: Requiere token válido Y que el rol sea 'jefe'
 //router.get('/', verifyToken, requireRole(['jefe']), incidenciasController.listarIncidencias);

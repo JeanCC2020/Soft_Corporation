@@ -1,3 +1,5 @@
+// Pruebas de unidad para el servicio de incidencias
+
 process.env.SUPABASE_URL = 'https://mock-url.supabase.co';
 process.env.SUPABASE_KEY = 'mock-key';
 
@@ -5,6 +7,7 @@ const incidenciasService = require('./incidencias.service');
 const incidenciasRepository = require('../repositories/incidencias.repository');
 const tecnicosRepository = require('../repositories/tecnicos.repository');
 
+//simulacion de repositorios para evitar llamadas reales a la base de datos durante las pruebas
 jest.mock('../repositories/incidencias.repository');
 jest.mock('../repositories/tecnicos.repository');
 
@@ -13,7 +16,9 @@ describe('Incidencias Service Unit Tests', () => {
     jest.clearAllMocks();
   });
 
+  // simula registro de incidencia con equipo existente y no existente, asignación de técnico con capacidad y sin capacidad, cambio de estado y persistencia de informe técnico
   describe('S037: registrarIncidencia', () => {
+    // escenario exitoso: el equipo existe 
     test('Debe registrar una incidencia correctamente si el equipo existe', async () => {
       const payload = {
         codigoEquipo: 'SOP-L01',
@@ -23,12 +28,14 @@ describe('Incidencias Service Unit Tests', () => {
       };
 
       // Mock de verificación de equipo
+      // Simula que el equipo existe en el inventario real  
       incidenciasRepository.findEquipoByCodigo.mockResolvedValue({
         data: { codigo: 'SOP-L01', descripcion: 'Laptop de prueba' },
         error: null,
       });
 
       // Mock de creación de incidencia
+      // simula la creación exitosa de una incidencia en la base de datos y devuelve el nuevo registro con un ID generado
       incidenciasRepository.createIncidencia.mockResolvedValue({
         data: {
           id: 'INC-1234',
@@ -55,7 +62,8 @@ describe('Incidencias Service Unit Tests', () => {
       expect(result.problema).toBe('Pantalla azul recurrente');
       expect(result.estado).toBe('Pendiente');
     });
-
+    
+    // escenario de error: el equipo no existe en el inventario
     test('Debe lanzar un error 400 si el equipo no existe en el inventario', async () => {
       const payload = {
         codigoEquipo: 'SOP-INVENTADO',
@@ -76,6 +84,7 @@ describe('Incidencias Service Unit Tests', () => {
     });
   });
 
+  // simula asignación de técnico con capacidad y sin capacidad 
   describe('S038: regla de asignación por capacidad', () => {
     test('Debe asignar el técnico y aumentar sus tareas si tiene capacidad disponible', async () => {
       const idIncidencia = 'INC-DEMO';

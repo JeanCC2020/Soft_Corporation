@@ -13,6 +13,7 @@ const USERS = [
   { email: 'roberto@softcorp.com', password: 'roberto123', nombre: 'Roberto Redes', rol: 'tecnico', tecnicoId: 'T-ROBERTO' }
 ];
 
+// Ruta de login para autenticar usuarios y generar JWT
 router.post('/login', (req, res) => {
   const { email, password } = req.body;
 
@@ -35,9 +36,10 @@ router.post('/login', (req, res) => {
       tecnicoId: user.tecnicoId || null 
     },
     JWT_SECRET,
-    { expiresIn: '8h' }
+    { expiresIn: '1h' }
   );
-
+  
+  // Retornar el token y los datos del usuario (sin la contraseña)
   return res.json({
     token,
     user: {

@@ -3,6 +3,10 @@ import { Link } from 'react-router-dom';
 import { ShieldCheck, Clock, PenTool, ArrowRight } from 'lucide-react';
 
 const Home = () => {
+  // Evaluamos de forma segura si el usuario está autenticado en local
+  const token = localStorage.getItem('token');
+  const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+
   return (
     <div className="animate-fade-in">
       {/* Hero Section */}
@@ -38,13 +42,38 @@ const Home = () => {
           <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', marginBottom: '2rem' }}>
             Sistema de gestión de incidencias técnicas de Soft Corporation. Registra reportes, recibe asistencia rápida y mantén tu entorno de trabajo seguro.
           </p>
+          
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-            <Link to="/nueva-incidencia" className="btn btn-primary">
-              Registrar Incidencia <ArrowRight size={18} />
-            </Link>
-            <Link to="/bandeja" className="btn btn-secondary">
-              Bandeja Jefatura de Soporte
-            </Link>
+            {token ? (
+              <>
+                {/* 1. FLUJO OPERATIVO: El usuario está logueado y ve sus herramientas según su rol */}
+                <Link to="/nueva-incidencia" className="btn btn-primary">
+                  Registrar Incidencia <ArrowRight size={18} />
+                </Link>
+                
+                {currentUser.rol === 'jefe' && (
+                  <Link to="/bandeja" className="btn btn-secondary">
+                    Bandeja Jefatura de Soporte
+                  </Link>
+                )}
+                
+                {currentUser.rol === 'tecnico' && (
+                  <Link to="/mis-tareas" className="btn btn-secondary">
+                    Ver Mis Tareas Asignadas
+                  </Link>
+                )}
+              </>
+            ) : (
+              <>
+                {/* 2. FLUJO PÚBLICO: No hay sesión activa. Se invita a ingresar */}
+                <Link to="/login" className="btn btn-primary">
+                  Ingresar al Portal Técnico <ArrowRight size={18} />
+                </Link>
+                <Link to="/login" className="btn btn-secondary">
+                  Reportar Problema Como Invitado
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </section>
@@ -84,7 +113,7 @@ const Home = () => {
           <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem', fontSize: '1.05rem' }}>
             ¿Problemas urgentes que no pueden esperar a ser atendidos por la plataforma? Contáctate con nuestra central de soporte al <strong style={{ color: 'var(--text-primary)' }}>Anexo 5420</strong> o envía un correo a <strong style={{ color: 'var(--text-primary)' }}>soporte@softcorp.com</strong>.
           </p>
-          <Link to="/nueva-incidencia" className="btn btn-secondary">
+          <Link to={token ? "/nueva-incidencia" : "/login"} className="btn btn-secondary">
              Abrir Ticket
           </Link>
         </div>

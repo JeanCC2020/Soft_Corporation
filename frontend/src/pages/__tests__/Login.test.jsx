@@ -60,4 +60,39 @@ describe('CP-IS-01: Login Frontend Form Tests', () => {
       expect(mockNavigate).toHaveBeenCalledWith('/');
     });
   });
+  test('CP-IS-03: Debe mostrar mensaje "Credenciales incorrectas" en pantalla si la clave es errónea', async () => {
+    // 1. Simular la respuesta de error del Servidor (401 Unauthorized)
+    global.fetch.mockResolvedValueOnce({
+      ok: false,
+      status: 401,
+      json: async () => ({ error: 'Credenciales incorrectas' }),
+    });
+
+    render(
+      <MemoryRouter>
+        <Login />
+      </MemoryRouter>
+    );
+
+    // 2. Pasos: Digitar las entradas del Excel
+    const inputEmail = screen.getByPlaceholderText('ejemplo@softcorp.com');
+    const inputPass = screen.getByPlaceholderText('••••••••');
+    const btnSubmit = screen.getByRole('button', { name: /Iniciar Sesión/i });
+
+    fireEvent.change(inputEmail, { target: { value: 'jefe@softcorp.com' } });
+    fireEvent.change(inputPass, { target: { value: 'claveFalsa99' } });
+
+    // 3. Paso: Hacer clic en el botón
+    fireEvent.click(btnSubmit);
+
+    // 4. Resultados Esperados (Validar que el cartel de error aparezca en la pantalla)
+    await waitFor(() => {
+      // El backend no debe guardar ningún token en el navegador
+      expect(localStorage.getItem('token')).toBeNull();
+
+      // Buscamos el texto exacto de la alerta en el HTML renderizado
+      const alertMessage = screen.getByText(/Credenciales incorrectas/i);
+      expect(alertMessage).toBeInTheDocument();
+    });
+  });
 });

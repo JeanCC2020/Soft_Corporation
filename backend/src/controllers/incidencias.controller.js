@@ -1,14 +1,7 @@
+// validacion de acceso a las incidencias segun el rol del usuario
+
 const incidenciasService = require('../services/incidencias.service');
-/*
-const listarIncidencias = async (req, res, next) => {
-  try {
-    const incidencias = await incidenciasService.listarIncidencias();
-    res.json(incidencias);
-  } catch (error) {
-    next(error);
-  }
-};
-*/
+
 const listarIncidencias = async (req, res, next) => {
   try {
     // Le pasamos el usuario autenticado (req.user) al servicio para que decida qué filtrar

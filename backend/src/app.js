@@ -12,7 +12,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Rutas públicas (sin autenticación)
 app.use('/api/auth', authRoutes);
+
+// Rutas protegidas (con autenticación)
 app.use('/api/tecnicos', verifyToken, tecnicosRoutes);
 app.use('/api/incidencias', verifyToken, incidenciasRoutes);
 

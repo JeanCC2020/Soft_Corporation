@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'softcorp-super-secret-key-2026';
 
+// Middleware para verificar el token JWT en las rutas protegidas
 const verifyToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   
@@ -25,6 +26,7 @@ const verifyToken = (req, res, next) => {
   }
 };
 
+// Middleware para verificar el rol del usuario autenticado
 const requireRole = (allowedRoles) => {
   return (req, res, next) => {
     if (!req.user) {
@@ -39,6 +41,7 @@ const requireRole = (allowedRoles) => {
   };
 };
 
+// Exportamos ambos middlewares para usarlos en las rutas protegidas
 module.exports = {
   verifyToken,
   requireRole

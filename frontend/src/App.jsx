@@ -8,7 +8,7 @@ import DetalleIncidencia from './pages/DetalleIncidencia';
 import MisTareas from './pages/MisTareas';
 import Login from './pages/Login';
 
-// Componente para proteger las rutas (S044)
+// Componente para proteger las rutas operativas
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const token = localStorage.getItem('token');
   const userJson = localStorage.getItem('currentUser');
@@ -19,7 +19,6 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 
   const user = JSON.parse(userJson);
   if (allowedRoles && !allowedRoles.includes(user.rol)) {
-    // Si no tiene el rol permitido, redirigir al Dashboard principal según su rol
     return <Navigate to={user.rol === 'jefe' ? '/bandeja' : '/mis-tareas'} replace />;
   }
 
@@ -27,30 +26,27 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 };
 
 function App() {
+  // Evaluamos el estado real de autenticación de forma dinámica
   const token = localStorage.getItem('token');
 
   return (
     <Router>
       <div className="app-container">
-        {/* Solo mostrar Navbar si el usuario está autenticado */}
-        {token && <Navbar />}
+        {/* El Navbar ahora es inteligente, se adapta internamente si hay token o no */}
+        <Navbar />
+        
         <main className="main-content">
           <Routes>
-            {/* Ruta de Login */}
+            {/* 1. HOME INTELIGENTE: Accesible para todos, pero adaptativo */}
+            <Route path="/" element={<Home />} />
+
+            {/* 2. RUTA DE AUTENTICACIÓN */}
             <Route 
               path="/login" 
               element={token ? <Navigate to="/" replace /> : <Login />} 
             />
 
-            {/* Rutas Protegidas */}
-            <Route 
-              path="/" 
-              element={
-                <ProtectedRoute allowedRoles={['jefe', 'tecnico']}>
-                  <Home />
-                </ProtectedRoute>
-              } 
-            />
+            {/* 3. RUTAS OPERATIVAS TOTALMENTE PROTEGIDAS */}
             <Route 
               path="/nueva-incidencia" 
               element={
@@ -84,8 +80,8 @@ function App() {
               } 
             />
 
-            {/* Redirección por defecto */}
-            <Route path="*" element={<Navigate to="/login" replace />} />
+            {/* Redirección limpia por defecto */}
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
       </div>
