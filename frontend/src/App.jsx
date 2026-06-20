@@ -7,6 +7,7 @@ import BandejaIncidencias from './pages/BandejaIncidencias';
 import DetalleIncidencia from './pages/DetalleIncidencia';
 import MisTareas from './pages/MisTareas';
 import Login from './pages/Login';
+import Dashboard from './components/Dashboard';
 
 // Componente para proteger las rutas operativas
 const ProtectedRoute = ({ children, allowedRoles }) => {
@@ -78,6 +79,9 @@ function App() {
                   <MisTareas />
                 </ProtectedRoute>
               } 
+            />
+            <Route 
+              path="/dashboard" element={<Dashboard />} 
             />
 
             {/* Redirección limpia por defecto */}

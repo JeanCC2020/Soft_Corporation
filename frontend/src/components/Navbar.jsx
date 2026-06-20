@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { MonitorPlay, ClipboardList, PlusCircle, UserCheck, LogOut, LogIn } from 'lucide-react';
+import { MonitorPlay, ClipboardList, PlusCircle, UserCheck, LogOut, LogIn, BarChart3 } from 'lucide-react';
 
 const Navbar = () => {
   const location = useLocation();
@@ -22,6 +22,7 @@ const Navbar = () => {
         { name: 'Inicio', path: '/', icon: <MonitorPlay size={18} />, roles: ['jefe', 'tecnico'] },
         { name: 'Nueva Incidencia', path: '/nueva-incidencia', icon: <PlusCircle size={18} />, roles: ['jefe', 'tecnico'] },
         { name: 'Bandeja', path: '/bandeja', icon: <ClipboardList size={18} />, roles: ['jefe'] },
+        { name: 'Dashboard Gerencial', path: '/dashboard', icon: <BarChart3 size={18} />, roles: ['jefe'] },
         { name: 'Mis Tareas', path: '/mis-tareas', icon: <UserCheck size={18} />, roles: ['tecnico'] },
       ].filter(item => item.roles.includes(currentUser.rol))
     : []; // Si no hay usuario, la lista de links de navegación queda vacía
